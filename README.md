@@ -48,7 +48,7 @@
 ## 🚀 Getting Started
 
 ```bash
-git clone https://github.com/your-username/PhishPage.git
+git clone https://github.com/your-elgenral-dark/PhishPage.git
 
 cd PhishPage
 ```
